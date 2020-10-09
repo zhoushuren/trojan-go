@@ -219,6 +219,34 @@ func NewServer(ctx context.Context, underlay tunnel.Server) (*Server, error) {
 	if cfg.API.Enabled {
 		go api.RunService(ctx, Name+"_SERVER", auth)
 	}
+	dis, _ := NewNode("hka1", ServiceInfo{ID: 1111111, IP: "101.1.1.1"}, []string{"localhost:2379"})
+	dis.Start()
+
+	// cli, err := clientv3.New(clientv3.Config{
+	// 	Endpoints:   []string{"localhost:2379"},
+	// 	DialTimeout: 5 * time.Second,
+	// })
+	// log.Info("ETCD start!!!")
+	// if err != nil {
+	// 	// handle error!
+	// 	log.Error("ETCD error", err)
+	// }
+	// resp, err := cli.Put(ctx, "user", "22222222")
+	// if err != nil {
+	// 	switch err {
+	// 	case context.Canceled:
+	// 		log.Fatalf("ctx is canceled by another routine: %v", err)
+	// 	case context.DeadlineExceeded:
+	// 		log.Fatalf("ctx is attached with a deadline is exceeded: %v", err)
+	// 	case rpctypes.ErrEmptyKey:
+	// 		log.Fatalf("client-side error: %v", err)
+	// 	default:
+	// 		log.Fatalf("bad cluster endpoints, which are not etcd servers: %v", err)
+	// 	}
+	// }
+	// log.Info(resp)
+
+	// defer cli.Close()
 
 	redirAddr := tunnel.NewAddressFromHostPort("tcp", cfg.RemoteHost, cfg.RemotePort)
 	s := &Server{

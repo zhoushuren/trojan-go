@@ -391,3 +391,8 @@ CGO_ENABLE=0 GOOS=linux GOARCH=arm go build -tags "full"
 ## Stargazers over time
 
 [![Stargazers over time](https://starchart.cc/p4gefau1t/trojan-go.svg)](https://starchart.cc/p4gefau1t/trojan-go)
+
+
+etcd搞不定 执行这个 
+
+go get go.etcd.io/etcd@221f0cc107cb3497eeb20fb241e1bcafca2e9115
