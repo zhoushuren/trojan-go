@@ -75,7 +75,7 @@ func (s *Node) Stop() {
 
 func (s *Node) keepAlive() (<-chan *clientv3.LeaseKeepAliveResponse, error) {
 	info := &s.Info
-	key := "services/" + s.Name
+	key := "server/" + s.Name
 	value, _ := json.Marshal(info)
 
 	// minimum lease TTL is 5-second

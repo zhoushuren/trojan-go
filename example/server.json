@@ -1,5 +1,6 @@
 {
     "run_type": "server",
+    "server_code": "hka1",
     "local_addr": "0.0.0.0",
     "local_port": 443,
     "remote_addr": "127.0.0.1",
@@ -8,9 +9,9 @@
         "your_password"
     ],
     "ssl": {
-        "cert": "your_cert.crt",
-        "key": "your_key.key",
-        "sni": "your-domain-name.com"
+        "cert": "/Users/jim/Downloads/app.weipi.online/app.weipi.online_chain.crt",
+        "key": "/Users/jim/Downloads/app.weipi.online/app.weipi.online_key.key",
+        "sni": "qq.com"
     },
     "router": {
         "enabled": true,
@@ -19,5 +20,9 @@
         ],
         "geoip": "/usr/share/trojan-go/geoip.dat",
         "geosite": "/usr/share/trojan-go/geosite.dat"
+    },
+    "etcd": {
+        "enabled": true,
+        "peer": "http://127.0.0.1:2379"
     }
 }
