@@ -34,7 +34,7 @@ func (a *Authenticator) updater() {
 			hash := user.Hash()
 			sent, recv := user.ResetTraffic()
 
-			s, err := a.db.Exec("UPDATE `users` SET `upload`=`upload`+?, `download`=`download`+? WHERE `password`=?;", recv, sent, hash)
+			s, err := a.db.Exec("UPDATE `users` SET `upload`=`upload`+?, `download`=`download`+? WHERE `password`=? and status = 0;", recv, sent, hash)
 			if err != nil {
 				log.Error(common.NewError("failed to update data to user table").Base(err))
 				continue
@@ -48,7 +48,7 @@ func (a *Authenticator) updater() {
 		log.Info("buffered data has been written into the database")
 
 		//update memory
-		rows, err := a.db.Query("SELECT password,quota,download,upload FROM users")
+		rows, err := a.db.Query("SELECT password,quota,download,upload FROM users where status = 0")
 		if err != nil {
 			log.Error(common.NewError("failed to pull data from the database").Base(err))
 			time.Sleep(a.updateDuration)
