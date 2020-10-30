@@ -38,7 +38,7 @@ func (a *Authenticator) updater() {
 				continue
 			}
 
-			s, err := a.db.Exec("UPDATE `users` SET `upload`=`upload`+?, `download`=`download`+? WHERE `password`=? AND status = 0;", recv, sent, hash)
+			s, err := a.db.Exec("UPDATE `users` SET `upload`=`upload`+?, `download`=`download`+? WHERE `password`=?;", recv, sent, hash)
 			if err != nil {
 				log.Error(common.NewError("failed to update data to user table").Base(err))
 				continue
@@ -46,10 +46,10 @@ func (a *Authenticator) updater() {
 			r, err := s.RowsAffected()
 			if err != nil {
 				log.Error(common.NewError("failed to update data to user table").Base(err))
+				if r == 0 {
+					a.DelUser(hash)
+				}
 				continue
-			}
-			if r == 0 {
-				a.DelUser(hash)
 			}
 		}
 		log.Info("buffered data has been written into the database")
@@ -69,6 +69,11 @@ func (a *Authenticator) updater() {
 				log.Error(common.NewError("failed to obtain data from the query result").Base(err))
 				break
 			}
+			if status == 1 {
+				a.DelUser(hash)
+				continue
+			}
+
 			if download+upload < quota || quota < 0 {
 				a.AddUser(hash)
 			} else {
