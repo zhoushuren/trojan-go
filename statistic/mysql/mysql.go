@@ -69,7 +69,7 @@ func (a *Authenticator) updater() {
 				log.Error(common.NewError("failed to obtain data from the query result").Base(err))
 				break
 			}
-			log.Debug("状态改为了", status)
+			log.Debug("状态改为了", hash, status)
 			if status == 1 {
 				log.Debug("删除了:", hash)
 				a.DelUser(hash)
@@ -77,6 +77,7 @@ func (a *Authenticator) updater() {
 			}
 
 			if download+upload < quota || quota < 0 {
+				log.Debug("添加了hash", hash)
 				a.AddUser(hash)
 			} else {
 				a.DelUser(hash)
