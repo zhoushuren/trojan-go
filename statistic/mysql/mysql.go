@@ -69,7 +69,9 @@ func (a *Authenticator) updater() {
 				log.Error(common.NewError("failed to obtain data from the query result").Base(err))
 				break
 			}
+			log.Debug("状态改为了", status)
 			if status == 1 {
+				log.Debug("删除了:", hash)
 				a.DelUser(hash)
 				continue
 			}
