@@ -34,21 +34,28 @@ func (a *Authenticator) updater() {
 			hash := user.Hash()
 			sent, recv := user.ResetTraffic()
 
+			if sent == 0 && recv == 0 { // 都为0则不需要记录流量
+				continue
+			}
+
 			s, err := a.db.Exec("UPDATE `users` SET `upload`=`upload`+?, `download`=`download`+? WHERE `password`=? AND status = 0;", recv, sent, hash)
 			if err != nil {
 				log.Error(common.NewError("failed to update data to user table").Base(err))
 				continue
 			}
-			if r, err := s.RowsAffected(); err != nil {
-				if r == 0 {
-					a.DelUser(hash)
-				}
+			r, err := s.RowsAffected()
+			if err != nil {
+				log.Error(common.NewError("failed to update data to user table").Base(err))
+				continue
+			}
+			if r == 0 {
+				a.DelUser(hash)
 			}
 		}
 		log.Info("buffered data has been written into the database")
 
 		//update memory
-		rows, err := a.db.Query("SELECT password,quota,download,upload FROM users WHERE status = 0")
+		rows, err := a.db.Query("SELECT password,quota,download,upload,status FROM users WHERE status = 0")
 		if err != nil {
 			log.Error(common.NewError("failed to pull data from the database").Base(err))
 			time.Sleep(a.updateDuration)
@@ -56,8 +63,8 @@ func (a *Authenticator) updater() {
 		}
 		for rows.Next() {
 			var hash string
-			var quota, download, upload int64
-			err := rows.Scan(&hash, &quota, &download, &upload)
+			var quota, download, upload, status int64
+			err := rows.Scan(&hash, &quota, &download, &upload, &status)
 			if err != nil {
 				log.Error(common.NewError("failed to obtain data from the query result").Base(err))
 				break
